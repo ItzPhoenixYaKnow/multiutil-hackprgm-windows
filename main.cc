@@ -1,5 +1,6 @@
 #ifndef UNICODE
 #define UNICODE
+#define WM_LBUTTONDOWN    0x0201
 #endif 
 
 #include <windows.h>
@@ -78,4 +79,48 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+        PostQuitMessage(0);
+
+MSG msg = { };
+while (GetMessage(&msg, NULL, 0, 0) > 0)
+{
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+}
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (uMsg)
+    {
+    case WM_SIZE:
+        {
+            int width = LOWORD(lParam);  // Macro to get the low-order word.
+            int height = HIWORD(lParam); // Macro to get the high-order word.
+
+            // Respond to the message:
+            OnSize(hwnd, (UINT)wParam, width, height);
+        }
+        break;
+    }
+}
+
+void OnSize(HWND hwnd, UINT flag, int width, int height)
+{
+    switch (uMsg)
+{
+    case WM_PAINT:
+    {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
+
+        // All painting occurs here, between BeginPaint and EndPaint.
+
+        FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
+
+        EndPaint(hwnd, &ps);
+    }
+    return 0;
+}
 }
